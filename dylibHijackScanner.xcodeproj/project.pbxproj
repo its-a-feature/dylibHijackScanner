@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C4589A7128C151F400C23A07 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4589A7028C151F400C23A07 /* main.m */; };
+		C4589A7828C1522100C23A07 /* parseHeaders.m in Sources */ = {isa = PBXBuildFile; fileRef = C4589A7728C1522100C23A07 /* parseHeaders.m */; };
+		C4589A7C28C1565A00C23A07 /* parseFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = C4589A7B28C1565A00C23A07 /* parseFiles.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,10 @@
 /* Begin PBXFileReference section */
 		C4589A6D28C151F400C23A07 /* dylibHijackScanner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dylibHijackScanner; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4589A7028C151F400C23A07 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C4589A7728C1522100C23A07 /* parseHeaders.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = parseHeaders.m; sourceTree = "<group>"; };
+		C4589A7928C1556200C23A07 /* parseHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parseHeaders.h; sourceTree = "<group>"; };
+		C4589A7A28C1564E00C23A07 /* parseFiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parseFiles.h; sourceTree = "<group>"; };
+		C4589A7B28C1565A00C23A07 /* parseFiles.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = parseFiles.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +64,10 @@
 			isa = PBXGroup;
 			children = (
 				C4589A7028C151F400C23A07 /* main.m */,
+				C4589A7728C1522100C23A07 /* parseHeaders.m */,
+				C4589A7928C1556200C23A07 /* parseHeaders.h */,
+				C4589A7A28C1564E00C23A07 /* parseFiles.h */,
+				C4589A7B28C1565A00C23A07 /* parseFiles.m */,
 			);
 			path = dylibHijackScanner;
 			sourceTree = "<group>";
@@ -119,6 +129,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4589A7828C1522100C23A07 /* parseHeaders.m in Sources */,
+				C4589A7C28C1565A00C23A07 /* parseFiles.m in Sources */,
 				C4589A7128C151F400C23A07 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +251,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -247,6 +261,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
