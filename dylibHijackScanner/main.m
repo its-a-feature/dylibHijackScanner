@@ -40,6 +40,7 @@ int main(int argc, const char * argv[]) {
             printf("\tRequired\n");
             printf("-displayAll [true|false]\n");
             printf("\tOptional - defaults to false and only shows vulnerable applications\n");
+            return 0;
         }
         displayAll = [arguments boolForKey:@"displayAll"];
         NSMutableArray<fileData*>* allApplications = recursivelyFindFiles(path);

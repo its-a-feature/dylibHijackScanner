@@ -61,6 +61,13 @@ bool addElementPreventDuplicates(NSMutableArray* array, NSString* string){
     return true;
 }
 bool addApplicationPreventDuplicates(NSMutableArray* array, fileData* data){
+    if( [array containsObject:data] ){
+        return false;
+    }else{
+        [array addObject:data];
+        return true;
+    }
+    /*
     for(int i = 0; i < [array count]; i++){
         fileData* cur = [array objectAtIndex:i];
         if( [cur.applicationPath isEqualToString:data.applicationPath] ){
@@ -69,6 +76,7 @@ bool addApplicationPreventDuplicates(NSMutableArray* array, fileData* data){
     }
     [array addObject:data];
     return true;
+     */
 }
 
 
@@ -116,17 +124,28 @@ NSMutableArray<fileData*>* recursivelyFindFiles(NSString* basePath){
     
 }
 
-NSMutableArray* recursivelyFindAllImportingRPaths(NSMutableArray<fileData*>* filesThatImportThisFile){
-    NSMutableArray<fileData*>* allImportingFiles = [[NSMutableArray alloc] initWithCapacity:0];
+void recursivelyFindAllImportingRPaths(NSMutableArray<fileData*>* filesThatImportThisFile, NSMutableArray<fileData*>* previouslySeen){
+    //NSMutableArray<fileData*>* allImportingFiles = [[NSMutableArray alloc] initWithCapacity:0];
+    if(previouslySeen == nil){
+        previouslySeen = [[NSMutableArray alloc] initWithCapacity:0];
+    }
     for(int i = 0; i < [filesThatImportThisFile count]; i++){
-        // add object
-        [allImportingFiles addObject:[filesThatImportThisFile objectAtIndex:i]];
+        if( [previouslySeen containsObject:[filesThatImportThisFile objectAtIndex:i]] ){
+            continue;
+        } else {
+            [previouslySeen addObject:[filesThatImportThisFile objectAtIndex:i]];
+        }
+        //addApplicationPreventDuplicates(allImportingFiles, [filesThatImportThisFile objectAtIndex:i]);
+        //[allImportingFiles addObject:[filesThatImportThisFile objectAtIndex:i]];
         // add all recursive children of object
-        NSMutableArray<fileData*>* nextRecursiveImports = recursivelyFindAllImportingRPaths( [filesThatImportThisFile objectAtIndex:i].filesThatImportThisFile );
-        [allImportingFiles addObjectsFromArray:nextRecursiveImports];
+        recursivelyFindAllImportingRPaths( [filesThatImportThisFile objectAtIndex:i].filesThatImportThisFile, previouslySeen );
+        //for(int j = 0; j < [nextRecursiveImports count]; j++){
+        //    addApplicationPreventDuplicates(allImportingFiles, [nextRecursiveImports objectAtIndex:j]);
+        //}
+        //[allImportingFiles addObjectsFromArray:nextRecursiveImports];
     }
     // return results
-    return allImportingFiles;
+    return;
 }
 
 void fixRPaths(NSMutableArray<fileData*>* allApplications){
@@ -169,7 +188,9 @@ void resolveDylibPaths(NSMutableArray<fileData*>* allApplications){
             importData* currentImport = [currentApplication.relativeImports objectAtIndex:j];
             if( ![currentImport.importType isEqualToString:@"LC_ID_DYLIB"]) {
                 if( [currentImport.importPath hasPrefix:@"@rpath"]){
-                    NSMutableArray<fileData*>* allOtherImporterRPaths = recursivelyFindAllImportingRPaths(currentApplication.filesThatImportThisFile);
+                    NSMutableArray<fileData*>* allOtherImporterRPaths = [[NSMutableArray alloc] initWithCapacity:0];
+                    //NSMutableArray<fileData*>* allOtherImporterRPaths = recursivelyFindAllImportingRPaths(currentApplication.filesThatImportThisFile);
+                    recursivelyFindAllImportingRPaths(currentApplication.filesThatImportThisFile, allOtherImporterRPaths);
                     for(fileData* importerApp in allOtherImporterRPaths){
                         for(NSString* importerAppRPath in importerApp.fixedRPaths){
                             addElementPreventDuplicates(currentApplication.fixedRPaths, importerAppRPath);

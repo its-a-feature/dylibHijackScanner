@@ -14,8 +14,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
             landmarkName = "recursivelyFindFiles(basePath)"
             landmarkType = "9">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "fixRPaths(allApplications)"
             landmarkType = "9">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "resolveDylibPaths(allApplications)"
             landmarkType = "9">
          </BreakpointContent>
@@ -94,8 +94,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "269"
-            endingLineNumber = "269"
+            startingLineNumber = "290"
+            endingLineNumber = "290"
             landmarkName = "findNestedLibraryImports(allApplications)"
             landmarkType = "9">
          </BreakpointContent>
@@ -110,8 +110,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "271"
-            endingLineNumber = "271"
+            startingLineNumber = "292"
+            endingLineNumber = "292"
             landmarkName = "findNestedLibraryImports(allApplications)"
             landmarkType = "9">
          </BreakpointContent>
@@ -126,8 +126,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
             landmarkName = "addApplicationPreventDuplicates(array, data)"
             landmarkType = "9">
          </BreakpointContent>
@@ -142,8 +142,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "addApplicationPreventDuplicates(array, data)"
             landmarkType = "9">
          </BreakpointContent>
@@ -158,9 +158,9 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
-            landmarkName = "recursivelyFindAllImportingRPaths(filesThatImportThisFile)"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "recursivelyFindAllImportingRPaths(filesThatImportThisFile, previouslySeen)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -174,9 +174,9 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "recursivelyFindAllImportingRPaths(filesThatImportThisFile)"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "recursivelyFindAllImportingRPaths(filesThatImportThisFile, previouslySeen)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -190,8 +190,8 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
+            startingLineNumber = "405"
+            endingLineNumber = "405"
             landmarkName = "findVulnerablePaths(allApplications, displayAllData)"
             landmarkType = "9">
          </BreakpointContent>
@@ -206,9 +206,41 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "385"
-            endingLineNumber = "385"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
             landmarkName = "findVulnerablePaths(allApplications, displayAllData)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E2EB4FB4-09B5-4088-BC93-05A1D6CDD8CF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dylibHijackScanner/parseFiles.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
+            landmarkName = "resolveDylibPaths(allApplications)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C8D0B987-C02D-41A3-AA77-3F1CC66EC440"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dylibHijackScanner/parseFiles.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
+            landmarkName = "findNestedLibraryImports(allApplications)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
