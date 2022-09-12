@@ -37,6 +37,7 @@
         self.relativeImports = [[NSMutableArray alloc] initWithCapacity:0];
         self.explicitImports = [[NSMutableArray alloc] initWithCapacity:0];
         self.filesThatImportThisFile = [[NSMutableArray alloc] initWithCapacity:0];
+        self.entitlements = [[NSMutableDictionary alloc] initWithCapacity:0];
     }
     return self;
 }

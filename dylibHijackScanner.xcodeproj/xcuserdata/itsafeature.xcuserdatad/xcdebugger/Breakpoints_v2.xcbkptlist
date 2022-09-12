@@ -46,8 +46,8 @@
             filePath = "dylibHijackScanner/parseHeaders.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "parse_macho(input, path)"
             landmarkType = "9">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "dylibHijackScanner/parseHeaders.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
             landmarkName = "parse_macho(input, path)"
             landmarkType = "9">
          </BreakpointContent>
@@ -190,9 +190,9 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
-            landmarkName = "findVulnerablePaths(allApplications, displayAllData)"
+            startingLineNumber = "459"
+            endingLineNumber = "459"
+            landmarkName = "findVulnerablePaths(allApplications, displayAllData, displayVulnerableTypes, displayString)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -206,9 +206,9 @@
             filePath = "dylibHijackScanner/parseFiles.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "406"
-            endingLineNumber = "406"
-            landmarkName = "findVulnerablePaths(allApplications, displayAllData)"
+            startingLineNumber = "461"
+            endingLineNumber = "461"
+            landmarkName = "findVulnerablePaths(allApplications, displayAllData, displayVulnerableTypes, displayString)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -241,6 +241,38 @@
             startingLineNumber = "288"
             endingLineNumber = "288"
             landmarkName = "findNestedLibraryImports(allApplications)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E2C8ACDC-10ED-466F-AE21-7765F0A861B8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dylibHijackScanner/main.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BA877721-065D-4F64-B4AF-0D200389DA4F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dylibHijackScanner/main.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

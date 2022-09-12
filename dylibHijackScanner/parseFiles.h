@@ -13,7 +13,7 @@
 NSMutableArray<fileData*>* recursivelyFindFiles(NSString* basePath);
 fileData* processFile(char* path);
 void fixRPaths(NSMutableArray<fileData*>* allApplications, fileData* currentApplication);
-NSMutableArray* findVulnerablePaths(NSMutableArray<fileData*>* allApplications, bool displayAllData);
+NSMutableArray* findVulnerablePaths(NSMutableArray<fileData*>* allApplications, bool displayAllData, NSString* displayVulnerableTypes, NSMutableString** displayString);
 void findNestedLibraryImports(NSMutableArray<fileData*>* allApplications);
 void findNestedDylibHijacks(NSMutableArray<fileData*>* allApplications);
 bool addElementPreventDuplicates(NSMutableArray* array, NSString* string);
