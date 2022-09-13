@@ -257,7 +257,7 @@ void findNestedDylibHijacks(NSMutableArray<fileData*>* allApplications){
                     for(int m = 0; m < [allApplications count]; m++){
                         if( [fullImportPath isEqualToString:[allApplications objectAtIndex:m].applicationPath] ){
                             // found a matching path
-                            if([allApplications objectAtIndex:m].hijackableDirectLoad || [allApplications objectAtIndex:m].hijackableIndirectLoad){
+                            if( [allApplications objectAtIndex:m].hijackableEntitlements && ([allApplications objectAtIndex:m].hijackableDirectLoad || [allApplications objectAtIndex:m].hijackableIndirectLoad) ){
                                 if(addElementPreventDuplicates(currentApplication.hijackableIndirectLoadLibraries, [allApplications objectAtIndex:m].applicationPath)){
                                     // this means we added a new path to our list of indirect hijackable paths
                                     madeUpdate = true;
