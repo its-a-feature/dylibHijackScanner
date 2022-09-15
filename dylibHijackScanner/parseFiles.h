@@ -11,7 +11,7 @@
 #import "parseHeaders.h"
 
 NSMutableArray<fileData*>* recursivelyFindFiles(NSString* basePath);
-fileData* processFile(char* path);
+fileData* processFile(const char* path);
 void fixRPaths(NSMutableArray<fileData*>* allApplications, fileData* currentApplication);
 NSMutableArray* findVulnerablePaths(NSMutableArray<fileData*>* allApplications, bool displayAllData, NSString* displayVulnerableTypes, NSMutableString** displayString);
 void findNestedLibraryImports(NSMutableArray<fileData*>* allApplications);

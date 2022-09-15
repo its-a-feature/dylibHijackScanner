@@ -76,7 +76,7 @@ static uint32_t macho_nswap32(uint32_t input) {
 }
 
 /* Parse a Mach-O header */
-fileData* parse_macho (macho_input_t *input, char* path) {
+fileData* parse_macho (macho_input_t *input, const char* path) {
     /* Read the file type. */
     fileData* myFileData = [[fileData alloc] init];
     NSString* basePath = [[NSString alloc] initWithUTF8String:path];
@@ -200,7 +200,11 @@ fileData* parse_macho (macho_input_t *input, char* path) {
                 //NSLog(@"Found code signature for %@\n", myFileData.applicationPath);
                 foundCodeSignature = true;
                 SecStaticCodeRef staticCode = NULL;
-                OSStatus status = SecStaticCodeCreateWithPath( CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, [myFileData.applicationPath UTF8String], myFileData.applicationPath.length, false), 0, &staticCode);
+                
+                CFURLRef cfURLRef = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, [myFileData.applicationPath UTF8String], myFileData.applicationPath.length, false);
+                
+                OSStatus status = SecStaticCodeCreateWithPath(cfURLRef , 0, &staticCode);
+                
                 if(status == 0){
                     CFDictionaryRef codeInfo = NULL;
                     status = SecCodeCopySigningInformation(staticCode,  kSecCSSigningInformation, &codeInfo);
@@ -237,11 +241,17 @@ fileData* parse_macho (macho_input_t *input, char* path) {
                             // no signing data, so we're hijackable based on entitlements anyway
                             myFileData.hijackableEntitlements = true;
                         }
+                        CFRelease(codeInfo);
+                        CFRelease(cfURLRef);
+                        CFRelease(staticCode);
                     } else {
-                        //NSLog(@"Failed to get signing information\n");
+                        //NSLog(@"Failed to get signing information for %@\n", myFileData.applicationPath);
+                        CFRelease(cfURLRef);
+                        CFRelease(staticCode);
                     }
+                    
                 } else {
-                    //NSLog(@"Failed to get code signature\n");
+                    //NSLog(@"Failed to get code signature for %@ with status %d\n", myFileData.applicationPath, (int)status);
                 }
                 
                 break;

@@ -78,6 +78,6 @@ static const void *macho_offset (macho_input_t *input, const void *address, size
 char *macho_format_dylib_version (uint32_t version);
 static uint32_t macho_swap32 (uint32_t input);
 static uint32_t macho_nswap32(uint32_t input);
-fileData* parse_macho (macho_input_t *input, char* path);
+fileData* parse_macho (macho_input_t *input, const char* path);
 
 #endif /* parseHeaders_h */

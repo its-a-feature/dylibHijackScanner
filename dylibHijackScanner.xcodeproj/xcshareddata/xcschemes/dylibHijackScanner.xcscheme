@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-path &quot;/Applications/Visual Studio Code.app&quot;"
+            argument = "-path &quot;/Applications&quot; -types macho"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -9,8 +9,9 @@
 #import "parseHeaders.h"
 #include <mach-o/dyld.h>
 
-fileData* processFile(char* path){
+fileData* processFile(const char* path){
     int fd = open(path, O_RDONLY);
+    //NSLog(@"New fd: %d\n", fd);
     if (fd < 0) {
         NSLog(@"Failed to open file (%s): %d", path, fd);
         return nil;
@@ -18,7 +19,9 @@ fileData* processFile(char* path){
 
     struct stat stbuf;
     if (fstat(fd, &stbuf) != 0) {
-        close(fd);
+        if( close(fd) != 0 ){
+            NSLog(@"Failed to close fd: %d\n", fd);
+        }
         NSLog(@"Failed to stat file (%s)", path);
         return nil;
     }
@@ -26,7 +29,9 @@ fileData* processFile(char* path){
     /* mmap */
     void *data = mmap(NULL, stbuf.st_size, PROT_READ, MAP_FILE|MAP_PRIVATE, fd, 0);
     if (data == MAP_FAILED){
-        close(fd);
+        if( close(fd) != 0 ){
+            NSLog(@"Failed to close fd: %d\n", fd);
+        }
         //NSLog(@"Failed to map file (%s)", path);
         return nil;
     }
@@ -39,18 +44,30 @@ fileData* processFile(char* path){
     //printf("Parsing: %s\n", path);
     fileData* myFileData = parse_macho(&input_file, path);
     if(myFileData == nil){
-        close(fd);
+        
+        if( close(fd) != 0 ){
+            NSLog(@"Failed to close fd: %d\n", fd);
+        }
         munmap(data, stbuf.st_size);
         //NSLog(@"Failed to parse macho file (%s)", path);
         return nil;
     }
 
     munmap(data, stbuf.st_size);
-    close(fd);
+    if( close(fd) != 0 ){
+        NSLog(@"Failed to close fd: %d\n", fd);
+    }
     return myFileData;
 }
 
 bool addElementPreventDuplicates(NSMutableArray* array, NSString* string){
+    if( [array containsObject:string] ){
+        return false;
+    } else {
+        [array addObject:string];
+        return true;
+    }
+    /*
     for(int i = 0; i < [array count]; i++){
         NSString* cur = [array objectAtIndex:i];
         if( [cur isEqualToString:string] ){
@@ -59,6 +76,7 @@ bool addElementPreventDuplicates(NSMutableArray* array, NSString* string){
     }
     [array addObject:string];
     return true;
+     */
 }
 bool addApplicationPreventDuplicates(NSMutableArray* array, fileData* data){
     if( [array containsObject:data] ){
@@ -89,43 +107,39 @@ NSMutableArray<fileData*>* recursivelyFindFiles(NSString* basePath){
         NSString* currentPath = [pathsToCheck objectAtIndex:0];
         [pathsToCheck removeObjectAtIndex:0];
         NSError* err;
-        NSDictionary<NSFileAttributeKey, id> * attributes = [fileManager attributesOfItemAtPath:currentPath error:&err];
-        if(err != nil){
-            NSLog(@"Error getting attributesOfItemAtPath for %@: %@", currentPath, err);
-            continue;
-        }
-        if( [[attributes valueForKey:NSFileType] isEqualToString:NSFileTypeDirectory] ){
-            NSArray<NSString *> * files = [fileManager contentsOfDirectoryAtPath:currentPath error:&err];
-            if(err != nil){
-                NSLog(@"Error getting attributesOfItemAtPath: %@", err);
-            }
-            for(int i = 0; i < [files count]; i++){
-                [pathsToCheck addObject:[[NSString alloc] initWithFormat:@"%@/%@", currentPath, [files objectAtIndex:i] ] ];
-            }
-        } else {
-            // only add macho files
-            NSString* symlinkedPath = [currentPath stringByResolvingSymlinksInPath];
-            if(![paths containsObject:symlinkedPath]){
-                [paths addObject:symlinkedPath];
+        bool isDirectory = false;
+        if([fileManager fileExistsAtPath:currentPath isDirectory:&isDirectory]){
+            if(isDirectory){
+                NSArray<NSString *> * files = [fileManager contentsOfDirectoryAtPath:currentPath error:&err];
+                if(err != nil){
+                    NSLog(@"Error getting contentsOfDirectoryAtPath: %@", err);
+                }
+                for(int i = 0; i < [files count]; i++){
+                    NSString* newPath = [[NSString alloc] initWithFormat:@"%@/%@", currentPath, [files objectAtIndex:i] ];
+                    NSString* symlinkedPath = [newPath stringByResolvingSymlinksInPath];
+                    if(![paths containsObject:symlinkedPath]){
+                        [paths addObject:symlinkedPath];
+                        [pathsToCheck addObject:symlinkedPath];
+                    }
+                    
+                    
+                }
+            } else {
                 fileData* myFileData = processFile([currentPath UTF8String]);
                 if(myFileData != nil ){
                     if(!myFileData.platformBinary){
                         // don't bother tracking anything for platform binaries since they won't be vulnerable
                         [allApplications addObject:myFileData];
                     }
-                    
                 }
             }
-            
         }
-        
     }
     return allApplications;
     
 }
 
 void recursivelyFindAllImportingRPaths(NSMutableArray<fileData*>* filesThatImportThisFile, NSMutableArray<fileData*>* previouslySeen){
-    //NSMutableArray<fileData*>* allImportingFiles = [[NSMutableArray alloc] initWithCapacity:0];
     if(previouslySeen == nil){
         previouslySeen = [[NSMutableArray alloc] initWithCapacity:0];
     }
@@ -135,14 +149,8 @@ void recursivelyFindAllImportingRPaths(NSMutableArray<fileData*>* filesThatImpor
         } else {
             [previouslySeen addObject:[filesThatImportThisFile objectAtIndex:i]];
         }
-        //addApplicationPreventDuplicates(allImportingFiles, [filesThatImportThisFile objectAtIndex:i]);
-        //[allImportingFiles addObject:[filesThatImportThisFile objectAtIndex:i]];
         // add all recursive children of object
         recursivelyFindAllImportingRPaths( [filesThatImportThisFile objectAtIndex:i].filesThatImportThisFile, previouslySeen );
-        //for(int j = 0; j < [nextRecursiveImports count]; j++){
-        //    addApplicationPreventDuplicates(allImportingFiles, [nextRecursiveImports objectAtIndex:j]);
-        //}
-        //[allImportingFiles addObjectsFromArray:nextRecursiveImports];
     }
     // return results
     return;
@@ -169,13 +177,6 @@ void fixRPaths(NSMutableArray<fileData*>* allApplications){
                 addElementPreventDuplicates(currentApplication.fixedRPaths, [rPath stringByStandardizingPath]);
             }
         }
-        /*
-        if([currentApplication.rPaths count] == 0 ){
-            // if there's no LC_RPATH defined, take it to mean the current directory
-            NSString* executable_path = [currentApplication.applicationPath stringByDeletingLastPathComponent];
-            addElementPreventDuplicates(currentApplication.fixedRPaths, executable_path);
-        }
-         */
     }
     return;
 }
@@ -198,14 +199,20 @@ void resolveDylibPaths(NSMutableArray<fileData*>* allApplications){
                         }
                     }
                     NSString* strippedPrefix = [currentImport.importPath stringByReplacingOccurrencesOfString:@"@rpath" withString:@""];
-                    for(NSString* currentRPath in currentApplication.fixedRPaths){
-                        NSString* newString = [[NSString alloc] initWithFormat:@"%@%@", currentRPath, strippedPrefix];
+                    bool foundExistingLibrary = false;
+                    for(int k = 0; k < [currentApplication.fixedRPaths count]; k++){
+                        NSString* newString = [[NSString alloc] initWithFormat:@"%@%@", [currentApplication.fixedRPaths objectAtIndex:k], strippedPrefix];
                         NSString* standardizedPath = [newString stringByStandardizingPath];
                         NSString* symlinkPath = [newString stringByResolvingSymlinksInPath];
-                        if( ![fileManager fileExistsAtPath:standardizedPath] ){
+                        // only actually hijackable if we have a NotFound followed by a Found. If you find the first place you look, we can't hijack
+                        if( ![fileManager fileExistsAtPath:standardizedPath] && !foundExistingLibrary ){
                             currentApplication.hijackableDirectLoad = true;
-                        } else if (![fileManager fileExistsAtPath:symlinkPath] ){
+                            foundExistingLibrary = true;
+                        } else if (![fileManager fileExistsAtPath:symlinkPath] && !foundExistingLibrary ){
                             currentApplication.hijackableDirectLoad = true;
+                            foundExistingLibrary = true;
+                        } else if ([fileManager fileExistsAtPath:symlinkPath] || [fileManager fileExistsAtPath:standardizedPath]){
+                            foundExistingLibrary = true;
                         }
                         addElementPreventDuplicates(currentImport.fixedImportPaths, standardizedPath);
                         addElementPreventDuplicates(currentImport.fixedImportPaths, symlinkPath);
@@ -243,6 +250,10 @@ void resolveDylibPaths(NSMutableArray<fileData*>* allApplications){
     return;
 }
 void findNestedDylibHijacks(NSMutableArray<fileData*>* allApplications){
+    NSMutableDictionary<NSString*, fileData*>* allApplicationsMap = [[NSMutableDictionary alloc] initWithCapacity:[allApplications count]];
+    for(int i = 0; i < [allApplications count]; i++){
+        [allApplicationsMap setObject:[allApplications objectAtIndex:i] forKey:[allApplications objectAtIndex:i].applicationPath];
+    }
     for(int i = 0; i < [allApplications count]; i++){
         fileData* currentApplication = [allApplications objectAtIndex:i];
         for(int j = 0; j < [currentApplication.relativeImports count]; j++){
@@ -254,16 +265,13 @@ void findNestedDylibHijacks(NSMutableArray<fileData*>* allApplications){
                 bool madeUpdate = true;
                 while(madeUpdate){
                     madeUpdate = false;
-                    for(int m = 0; m < [allApplications count]; m++){
-                        if( [fullImportPath isEqualToString:[allApplications objectAtIndex:m].applicationPath] ){
-                            // found a matching path
-                            if( [allApplications objectAtIndex:m].hijackableEntitlements && ([allApplications objectAtIndex:m].hijackableDirectLoad || [allApplications objectAtIndex:m].hijackableIndirectLoad) ){
-                                if(addElementPreventDuplicates(currentApplication.hijackableIndirectLoadLibraries, [allApplications objectAtIndex:m].applicationPath)){
-                                    // this means we added a new path to our list of indirect hijackable paths
-                                    madeUpdate = true;
-                                }
-                                currentApplication.hijackableIndirectLoad = true;
+                    if( allApplicationsMap[fullImportPath] != nil){
+                        if( allApplicationsMap[fullImportPath].hijackableEntitlements && (allApplicationsMap[fullImportPath].hijackableDirectLoad || allApplicationsMap[fullImportPath].hijackableIndirectLoad) ){
+                            if(addElementPreventDuplicates(currentApplication.hijackableIndirectLoadLibraries, allApplicationsMap[fullImportPath].applicationPath)){
+                                // this means we added a new path to our list of indirect hijackable paths
+                                madeUpdate = true;
                             }
+                            currentApplication.hijackableIndirectLoad = true;
                         }
                     }
                 }
@@ -273,6 +281,10 @@ void findNestedDylibHijacks(NSMutableArray<fileData*>* allApplications){
     }
 }
 void findNestedLibraryImports(NSMutableArray<fileData*>* allApplications){
+    NSMutableDictionary<NSString*, fileData*>* allApplicationsMap = [[NSMutableDictionary alloc] initWithCapacity:[allApplications count]];
+    for(int i = 0; i < [allApplications count]; i++){
+        [allApplicationsMap setObject:[allApplications objectAtIndex:i] forKey:[allApplications objectAtIndex:i].applicationPath];
+    }
     for(int i = 0; i < [allApplications count]; i++){
         fileData* currentApplication = [allApplications objectAtIndex:i];
         for(int j = 0; j < [currentApplication.relativeImports count]; j++){
@@ -284,13 +296,10 @@ void findNestedLibraryImports(NSMutableArray<fileData*>* allApplications){
                 bool madeUpdate = true;
                 while(madeUpdate){
                     madeUpdate = false;
-                    for(int m = 0; m < [allApplications count]; m++){
-                        if( [fullImportPath isEqualToString:[allApplications objectAtIndex:m].applicationPath] ){
-                            // found a matching path
-                            if(addApplicationPreventDuplicates([allApplications objectAtIndex:m].filesThatImportThisFile, currentApplication)){
-                                // this means we added a new path to our list of loadable
-                                madeUpdate = true;
-                            }
+                    if(allApplicationsMap[fullImportPath] != nil){
+                        if(addApplicationPreventDuplicates(allApplicationsMap[fullImportPath].filesThatImportThisFile, currentApplication)){
+                            // this means we added a new path to our list of loadable
+                            madeUpdate = true;
                         }
                     }
                 }
@@ -306,6 +315,24 @@ NSString* getSigningFlagsString(int flags){
     }
     if(flags & kSecCodeSignatureRuntime){
         [applicationPrint appendFormat:@"hardened-runtime,"];
+    }
+    if(flags & kSecCodeSignatureHost){
+        [applicationPrint appendFormat:@"host"];
+    }
+    if(flags & kSecCodeSignatureAdhoc){
+        [applicationPrint appendFormat:@"ad-hoc"];
+    }
+    if(flags & kSecCodeSignatureForceHard){
+        [applicationPrint appendFormat:@"force-hard"];
+    }
+    if(flags & kSecCodeSignatureRestrict){
+        [applicationPrint appendFormat:@"restrict"];
+    }
+    if(flags & kSecCodeSignatureEnforcement){
+        [applicationPrint appendFormat:@"signature-enforced"];
+    }
+    if(flags & kSecCodeSignatureForceExpiration){
+        [applicationPrint appendFormat:@"reject-expired-certs"];
     }
     [applicationPrint appendFormat:@")"];
     return applicationPrint;
@@ -347,6 +374,7 @@ NSMutableArray<NSDictionary*>* findVulnerablePaths(NSMutableArray<fileData*>* al
         //printf("[-] No valid machO executables or dylibs found\n");
         //return vulnerablePaths;
     }
+    
     fixRPaths(allApplications);
     resolveDylibPaths(allApplications);
     findNestedLibraryImports(allApplications);
