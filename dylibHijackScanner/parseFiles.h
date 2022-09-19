@@ -2,7 +2,7 @@
 //  parseFiles.h
 //  dylibHijackScanner
 //
-//  Created by Cody Thomas on 9/1/22.
+//  Created by Cody Thomas, @its_a_feature_, on 9/1/22.
 //
 
 #ifndef parseFiles_h
