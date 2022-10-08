@@ -206,9 +206,15 @@ void resolveDylibPaths(NSMutableArray<fileData*>* allApplications){
                         NSString* symlinkPath = [newString stringByResolvingSymlinksInPath];
                         // only actually hijackable if we have a NotFound followed by a Found. If you find the first place you look, we can't hijack
                         if( ![fileManager fileExistsAtPath:standardizedPath] && !foundExistingLibrary ){
+                            if([standardizedPath hasPrefix:@"/usr/lib"]){
+                                
+                            }
                             currentApplication.hijackableDirectLoad = true;
                             foundExistingLibrary = true;
                         } else if (![fileManager fileExistsAtPath:symlinkPath] && !foundExistingLibrary ){
+                            if([standardizedPath hasPrefix:@"/usr/lib"]){
+                                
+                            }
                             currentApplication.hijackableDirectLoad = true;
                             foundExistingLibrary = true;
                         } else if ([fileManager fileExistsAtPath:symlinkPath] || [fileManager fileExistsAtPath:standardizedPath]){
