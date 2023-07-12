@@ -34,9 +34,33 @@ int main(int argc, const char * argv[]) {
         bool displayAll = false;
         NSString* types = @"all";
         NSString* outputFormat = @"string";
-        if( [arguments objectForKey:@"path"] ){
-            path = [arguments stringForKey:@"path"];
-        } else {
+        displayAll = [arguments boolForKey:@"displayAll"];
+        if( [arguments objectForKey:@"types"] ){
+            types = [arguments stringForKey:@"types"];
+        }
+        if( [arguments objectForKey:@"outputFormat"] ){
+            outputFormat = [arguments stringForKey:@"outputFormat"];
+        }
+        for(int i = 1; i < argc-1; i+=2){
+            //printf("argv[%d]: %s\n", i, argv[i]);
+            //printf("argv[%d]: %s\n", i+1, argv[i+1]);
+            NSString* key = [[NSString alloc] initWithUTF8String:argv[i]+1];
+            NSString* value = [[NSString alloc] initWithUTF8String:argv[i+1]];
+            if([key isEqualToString:@"displayAll"]){
+                if([value isEqualToString:@"true"]){
+                    displayAll = true;
+                } else {
+                    displayAll = false;
+                }
+            } else if([key isEqualToString:@"path"]) {
+                path = value;
+            } else if([key isEqualToString:@"types"]) {
+                types = value;
+            } else if ([key isEqualToString:@"outputFormat"]) {
+                outputFormat = value;
+            }
+        }
+        if( path == nil || [path length] == 0 ) {
             printf("Usage: \n");
             printf("-path {/path/to/application/app | /path/to/folder/with_apps}\n");
             printf("\tRequired\n");
@@ -48,13 +72,6 @@ int main(int argc, const char * argv[]) {
             printf("-outputFormat [string,json,prettyjson]\n");
             printf("\tOptional - defaults to 'string'\n");
             return 0;
-        }
-        displayAll = [arguments boolForKey:@"displayAll"];
-        if( [arguments objectForKey:@"types"] ){
-            types = [arguments stringForKey:@"types"];
-        }
-        if( [arguments objectForKey:@"outputFormat"] ){
-            outputFormat = [arguments stringForKey:@"outputFormat"];
         }
         NSMutableArray<fileData*>* allApplications = recursivelyFindFiles(path);
         NSMutableString* displayString = [[NSMutableString alloc] init];
